@@ -425,13 +425,13 @@ end
 local function AuraIconCD_OnShow(cd)
 	local button = cd:GetParent()
 	button:SetBorderParent(cd)
-	button.count:SetParent(cd)
+	button.Count:SetParent(cd)
 end
 
 local function AuraIconCD_OnHide(cd)
 	local button = cd:GetParent()
 	button:SetBorderParent(button)
-	button.count:SetParent(button)
+	button.Count:SetParent(button)
 end
 
 local function AuraIconOverlay_SetBorderColor(overlay, r, g, b)
@@ -445,17 +445,17 @@ end
 function ns.Auras_PostCreateButton(element, button)
 	ns.CreateBorder(button, 12)
 
-	button.cd:SetReverse(true)
-	button.cd:SetScript("OnHide", AuraIconCD_OnHide)
-	button.cd:SetScript("OnShow", AuraIconCD_OnShow)
-	if button.cd:IsShown() then AuraIconCD_OnShow(button.cd) end
+	button.Cooldown:SetReverse(true)
+	button.Cooldown:SetScript("OnHide", AuraIconCD_OnHide)
+	button.Cooldown:SetScript("OnShow", AuraIconCD_OnShow)
+	if button.Cooldown:IsShown() then AuraIconCD_OnShow(button.Cooldown) end
 
-	button.icon:SetTexCoord(0.03, 0.97, 0.03, 0.97)
+	button.Icon:SetTexCoord(0.03, 0.97, 0.03, 0.97)
 
-	button.overlay:Hide()
-	button.overlay.Hide = AuraIconOverlay_SetBorderColor
-	button.overlay.SetVertexColor = AuraIconOverlay_SetBorderColor
-	button.overlay.Show = noop
+	button.Overlay:Hide()
+	button.Overlay.Hide = AuraIconOverlay_SetBorderColor
+	button.Overlay.SetVertexColor = AuraIconOverlay_SetBorderColor
+	button.Overlay.Show = noop
 end
 
 local function FindAuraTimer(button, unit)
@@ -463,7 +463,7 @@ local function FindAuraTimer(button, unit)
 	if OmniCC then
 		for i = 1, button:GetNumChildren() do
 			local child = select(i, button:GetChildren())
-			if child.text and (child.icon == button.icon or child.cooldown == button.cd) then
+			if child.text and (child.Icon == button.Icon or child.Cooldown == button.Cooldown) then
 				child.ClearAllPoints = noop
 				child.SetAlpha = noop
 				child.SetPoint = noop
@@ -473,7 +473,7 @@ local function FindAuraTimer(button, unit)
 			end
 		end
 	else
-		local region = button.cd:GetRegions()
+		local region = button.Cooldown:GetRegions()
 		timer = region.SetText and region
 	end
 	if timer then
@@ -498,7 +498,7 @@ local function FindAuraTimer(button, unit)
 end
 
 function ns.Auras_PostUpdateButton(element, button, unit, data, position) --element, unit, button, index, offset)
-	button.icon:SetDesaturated(not playerUnits[button.caster or ""])
+	button.Icon:SetDesaturated(not playerUnits[button.caster or ""])
 
 	if not button.timer then
 		button.timer = FindAuraTimer(button, unit)
