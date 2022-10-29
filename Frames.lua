@@ -64,6 +64,7 @@ local function Spawn(self, unit, isSingle)
 	ns.CreateBorder(self)
 	self.UpdateBorder = ns.UpdateBorder
 
+	Mixin(self, BackdropTemplateMixin)
 	self:SetBackdrop(config.backdrop)
 	self:SetBackdropColor(0, 0, 0, 1)
 	self:SetBackdropBorderColor(unpack(config.borderColor))
@@ -71,7 +72,7 @@ local function Spawn(self, unit, isSingle)
 	-----------------------------------------------------------
 	-- Overlay to avoid reparenting stuff on powerless units --
 	-----------------------------------------------------------
-	self.overlay = CreateFrame("Frame", nil, self)
+	self.overlay = CreateFrame("Frame", nil, self, BackdropTemplateMixin and "BackdropTemplate")
 	self.overlay:SetAllPoints(true)
 
 	--health.value:SetParent(self.overlay)
@@ -80,7 +81,7 @@ local function Spawn(self, unit, isSingle)
 	-------------------------
 	-- Health bar and text --
 	-------------------------
-	local health = ns.CreateStatusBar(self, 24, "RIGHT")
+	local health = ns.CreateStatusBar(self, 18, "RIGHT")
 	health:SetPoint("TOPLEFT", self, "TOPLEFT", 1, -1)
 	health:SetPoint("TOPRIGHT", self, "TOPRIGHT", -1, -1)
 	health:SetPoint("BOTTOM", self, "BOTTOM", 0, 1)
@@ -175,11 +176,16 @@ local function Spawn(self, unit, isSingle)
 	-- Power bar and text --
 	------------------------
 	if uconfig.power then
-		local power = ns.CreateStatusBar(self, (uconfig.width or 1) > 0.75 and 16, "LEFT")
+		local power = ns.CreateStatusBar(self, (uconfig.width or 1) > 0.75 and 14, "LEFT")
 		--power:SetFrameLevel(self.Health:GetFrameLevel() + 2)
 		power:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 1, 1)
 		power:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -1, 1)
-		power:SetHeight(POWER_HEIGHT)
+		
+		if unit == "party" then
+		  power:SetHeight(POWER_HEIGHT * 0.5)
+		else
+		  power:SetHeight(POWER_HEIGHT)
+		end
 
 		health:SetPoint("BOTTOM", power, "TOP", 0, 1)
 
@@ -242,6 +248,7 @@ local function Spawn(self, unit, isSingle)
 	------------------------------
 	-- Class-specific resources --
 	------------------------------
+	
 	if unit == "player" then
 		local ClassPower = ns.Orbs.Create(self.overlay, 10, 20, true)
 		ClassPower[1]:SetPoint("TOPRIGHT", self, "BOTTOMRIGHT", 2, 5)
@@ -312,7 +319,7 @@ local function Spawn(self, unit, isSingle)
 	-- Secondary power bar --
 	-------------------------
 	if unit == "player" and ns.configPC.druidMana then
-		local AdditionalPower = ns.CreateStatusBar(self, 16, "CENTER")
+		local AdditionalPower = ns.CreateStatusBar(self, 14, "CENTER")
 		AdditionalPower:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 0, 0)
 		AdditionalPower:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", 0, 0)
 		AdditionalPower:SetHeight(FRAME_HEIGHT * config.powerHeight)
@@ -429,23 +436,24 @@ local function Spawn(self, unit, isSingle)
 	if unit == "player" then
 		local GAP = 6
 		local ROWS = 2
+		local SIZE_MOD = .9
 
 		local buffs = CreateFrame("Frame", nil, self)
 		buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 0, 24)
 		buffs:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", 0, 24)
-		buffs:SetHeight((FRAME_HEIGHT * ROWS) + (GAP * (ROWS - 1)))
+		buffs:SetHeight((FRAME_HEIGHT * SIZE_MOD * ROWS) + (GAP * (ROWS - 1)))
 
 		buffs["growth-x"] = "LEFT"
 		buffs["growth-y"] = "UP"
 		buffs["initialAnchor"] = "BOTTOMRIGHT"
 		buffs["num"] = floor((FRAME_WIDTH + GAP) / (FRAME_HEIGHT + GAP)) * ROWS
-		buffs["size"] = FRAME_HEIGHT
+		buffs["size"] = FRAME_HEIGHT * SIZE_MOD
 		buffs["spacing-x"] = GAP
 		buffs["spacing-y"] = GAP
 
-		buffs.CustomFilter   = ns.CustomAuraFilters.player
-		buffs.PostCreateIcon = ns.Auras_PostCreateIcon
-		buffs.PostUpdateIcon = ns.Auras_PostUpdateIcon
+		buffs.FilterAura   = ns.CustomAuraFilters.player
+		buffs.PostCreateButton = ns.Auras_PostCreateButton
+		buffs.PostUpdateButton  = ns.Auras_PostUpdateButton
 		buffs.PostUpdate     = ns.Auras_PostUpdate -- required to detect Dead => Ghost
 
 		self.Buffs = buffs
@@ -466,36 +474,37 @@ local function Spawn(self, unit, isSingle)
 		auras["spacing-x"] = GAP
 		auras["spacing-y"] = GAP
 
-		auras.CustomFilter   = ns.CustomAuraFilters.pet
-		auras.PostCreateIcon = ns.Auras_PostCreateIcon
-		auras.PostUpdateIcon = ns.Auras_PostUpdateIcon
+		auras.FilterAura     = ns.CustomAuraFilters.pet
+		auras.PostCreateButton = ns.Auras_PostCreateButton
+		auras.PostUpdateButton  = ns.Auras_PostUpdateButton
 
 		self.Auras = auras
 	elseif unit == "party" then
 		local GAP = 6
-		local MAX_ICONS = 5
+		local MAX_ICONS = 6
 
 		local auras = CreateFrame("Frame", nil, self)
-		auras:SetPoint("RIGHT", self, "LEFT", -10, 0)
+		auras:SetPoint("LEFT", self, "RIGHT", 10, 0)
 		auras:SetHeight(FRAME_HEIGHT)
 		auras:SetWidth((FRAME_HEIGHT * (MAX_ICONS + 1)) + (GAP * MAX_ICONS))
 
-		auras["growth-x"] = "LEFT"
+		auras["growth-x"] = "RIGHT"
 		auras["growth-y"] = "DOWN"
-		auras["initialAnchor"] = "RIGHT"
+		auras["initialAnchor"] = "LEFT"
 		auras["num"] = MAX_ICONS
 		auras["size"] = FRAME_HEIGHT
 		auras["spacing-x"] = GAP
 
-		auras.CustomFilter   = ns.CustomAuraFilters.party
-		auras.PostCreateIcon = ns.Auras_PostCreateIcon
-		auras.PostUpdateIcon = ns.Auras_PostUpdateIcon
+		auras.FilterAura   = ns.CustomAuraFilters.party
+		auras.PostCreateButton = ns.Auras_PostCreateButton
+		auras.PostUpdateButton  = ns.Auras_PostUpdateButton
 		auras.PostUpdate     = ns.Auras_PostUpdate -- required to detect Dead => Ghost
 
 		self.Auras = auras
 	elseif unit == "target" then
 		local GAP = 6
 		local ROWS = 3
+		local SIZE_MOD = .9
 
 		local ICONS_PER_ROW   = floor((FRAME_WIDTH + GAP) / (FRAME_HEIGHT + GAP))
 		local BUFFS_PER_ROW   = 2
@@ -504,17 +513,17 @@ local function Spawn(self, unit, isSingle)
 		local MAX_DEBUFFS     = ROWS * DEBUFFS_PER_ROW
 
 		local debuffs = CreateFrame("Frame", nil, self)
-		debuffs:SetHeight((FRAME_HEIGHT * ROWS) + (GAP * 2 * (ROWS - 1)))
+		debuffs:SetHeight((FRAME_HEIGHT * SIZE_MOD * ROWS) + (GAP * 2 * (ROWS - 1)))
 
 		debuffs["growth-y"] = "UP"
 		debuffs["showType"] = true
-		debuffs["size"] = FRAME_HEIGHT
+		debuffs["size"] = FRAME_HEIGHT * SIZE_MOD
 		debuffs["spacing-x"] = GAP
 		debuffs["spacing-y"] = GAP * 2
 
-		debuffs.CustomFilter   = ns.CustomAuraFilters.target
-		debuffs.PostCreateIcon = ns.Auras_PostCreateIcon
-		debuffs.PostUpdateIcon = ns.Auras_PostUpdateIcon
+		debuffs.FilterAura   = ns.CustomAuraFilters.target
+		debuffs.PostCreateButton = ns.Auras_PostCreateButton
+		debuffs.PostUpdateButton  = ns.Auras_PostUpdateButton
 		debuffs.PostUpdate     = ns.Auras_PostUpdate -- required to detect Dead => Ghost
 
 		self.Debuffs = debuffs
@@ -524,13 +533,13 @@ local function Spawn(self, unit, isSingle)
 
 		buffs["growth-y"] = "UP"
 		buffs["showType"] = false
-		buffs["size"] = FRAME_HEIGHT
+		buffs["size"] = FRAME_HEIGHT * 0.75
 		buffs["spacing-x"] = GAP
 		buffs["spacing-y"] = GAP * 2
 
-		buffs.CustomFilter   = ns.CustomAuraFilters.target
-		buffs.PostCreateIcon = ns.Auras_PostCreateIcon
-		buffs.PostUpdateIcon = ns.Auras_PostUpdateIcon
+		buffs.FilterAura   = ns.CustomAuraFilters.target
+		buffs.PostCreateButton = ns.Auras_PostCreateButton
+		buffs.PostUpdateButton  = ns.Auras_PostUpdateButton
 
 		self.Buffs = buffs
 
@@ -578,11 +587,15 @@ local function Spawn(self, unit, isSingle)
 	------------
 	-- Threat --
 	------------
-	self.Threat = {
-		Hide = nop, -- oUF stahp
-		IsObjectType = nop,
-		Override = ns.Threat_Override,
-	}
+--	self.Threat = {
+--		Hide = nop, -- oUF stahp
+--		IsObjectType = nop,
+--		Override = ns.Threat_Override,
+--	}
+	local threat = {}
+	threat.IsObjectType = function() end
+	threat.Override = ns.Threat_Override
+	self.ThreatIndicator = threat
 
 	-------------------------------------
 	-- Range || Plugin: oUF_SpellRange --
@@ -736,7 +749,7 @@ function ns.Factory(oUF)
 
 		bar.text:ClearAllPoints()
 		bar.text:SetPoint("LEFT", bar, 4, 0)
-		bar.text:SetFont(FONT_FILE, 16, config.fontOutline)
+		--bar.text:SetFont(FONT_FILE, 16, config.fontOutline) -- dragonflight
 
 		bar.border:Hide()
 

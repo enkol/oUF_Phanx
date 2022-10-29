@@ -193,10 +193,17 @@ if playerClass == "DEATHKNIGHT" then
 	a[191587] = FILTER_BY_PLAYER -- Virulent Plague
 	a[211794] = FILTER_BY_PLAYER -- Winter is Coming
 	a[212552] = FILTER_BY_PLAYER -- Wraith Walk
+	a[ 50401] = FILTER_BY_PLAYER -- Razorice
 	-- Talents
 	a[116888] = FILTER_BY_PLAYER -- Shroud of Purgatory (from Purgatory)
+	a[281209
+	
+	] = FILTER_BY_PLAYER -- Cold Heart
 	-- Artifact Traits
 	a[191748] = FILTER_BY_PLAYER -- Scouge of Worlds
+	-- Azerite Powers
+	a[275931] = FILTER_BY_PLAYER -- Harrowing Decay
+	a[274373] = FILTER_BY_PLAYER -- Festermight
 end
 
 ------------------------------------------------------------------------
@@ -323,8 +330,7 @@ if playerClass == "MAGE" then
 	a[205766] = FILTER_BY_PLAYER -- Bone Chilling
 	a[190319] = FILTER_BY_PLAYER -- Combustion
 	a[   120] = FILTER_BY_PLAYER -- Cone of Cold
-	a[31661] = FILTER_BY_PLAYER -- Dragon's Breath
-	a[210134] = FILTER_BY_PLAYER -- Erosion
+	a[ 31661] = FILTER_BY_PLAYER -- Dragon's Breath
 	a[126084] = FILTER_BY_PLAYER -- Fingers of Frost -- NEEDS CHECK 44544
 	a[  2120] = FILTER_BY_PLAYER -- Flamestrike
 	a[112948] = FILTER_BY_PLAYER -- Frost Bomb
@@ -339,6 +345,16 @@ if playerClass == "MAGE" then
 	a[ 12654] = FILTER_BY_PLAYER -- Ignite
 	a[    66] = FILTER_BY_PLAYER -- Invisibility
 	a[ 44457] = FILTER_BY_PLAYER -- Living Bomb
+	a[ 44461] = FILTER_BY_PLAYER -- Living Bomb
+	a[217694] = FILTER_BY_PLAYER -- Living Bomb
+	a[244813] = FILTER_BY_PLAYER -- Living Bomb
+	a[155158] = FILTER_BY_PLAYER -- Meteor Burn
+	a[155158] = FILTER_BY_PLAYER -- Meteor Burn
+	a[226757] = FILTER_BY_PLAYER -- Conflagration
+	a[235313] = FILTER_BY_PLAYER -- Blazing Barrier
+	a[235450] = FILTER_BY_PLAYER -- Prismatic Barrier
+	a[116014] = FILTER_BY_PLAYER -- Rune of Power
+	a[116267] = FILTER_BY_PLAYER -- Incanter's Flow
 	a[114923] = FILTER_BY_PLAYER -- Nether Tempest
 	a[205025] = FILTER_BY_PLAYER -- Presence of Mind
 	a[198924] = FILTER_BY_PLAYER -- Quickening
@@ -816,35 +832,36 @@ local function debug(...)
 	ChatFrame3:AddMessage(strjoin(" ", tostringall(...)))
 end
 
+--iconFrame, name, icon, count, debuffType, data.duration, expirationTime, data.sourceUnit, canStealOrPurge, _, data.spellId, canApplyAura, data.isBossAura, casterIsPlayer, nameplateShowAll
 local filterFuncs = {
-	default = function(self, unit, iconFrame, name, icon, count, debuffType, duration, expirationTime, caster, canStealOrPurge, _, spellID, canApplyAura, isBossAura, casterIsPlayer, nameplateShowAll, timeMod)
-		local v = auraList[spellID]
+	default = function(self, unit, data)
+		local v = auraList[data.spellId]
 		return not v or bit_band(v, FILTER_DISABLE) == 0
 	end,
-	player = function(self, unit, iconFrame, name, icon, count, debuffType, duration, expirationTime, caster, canStealOrPurge, _, spellID, canApplyAura, isBossAura, casterIsPlayer, nameplateShowAll, timeMod)
-		local v = auraList[spellID]
+	player = function(self, unit, data)
+		local v = auraList[data.spellId]
 		if v then
-			return checkFilter(v, self, unit, caster)
+			return checkFilter(v, self, unit, data.sourceUnit)
 		else
-			return isBossAura or caster == "vehicle"
+			return data.isBossAura or data.sourceUnit == "vehicle"
 		end
 	end,
-	pet = function(self, unit, iconFrame, name, icon, count, debuffType, duration, expirationTime, caster, canStealOrPurge, _, spellID, canApplyAura, isBossAura, casterIsPlayer, nameplateShowAll, timeMod)
-		local v = auraList[spellID]
+	pet = function(self, unit, data)
+		local v = auraList[data.spellId]
 		if v then
-			return caster and unitIsPlayer[caster] and bit_band(v, FILTER_BY_PLAYER) > 0
+			return data.sourceUnit and unitIsPlayer[data.sourceUnit] and bit_band(v, FILTER_BY_PLAYER) > 0
 		else
-			return isBossAura or caster == "vehicle"
+			return data.isBossAura or data.sourceUnit == "vehicle"
 		end
 	end,
-	target = function(self, unit, iconFrame, name, icon, count, debuffType, duration, expirationTime, caster, canStealOrPurge, _, spellID, canApplyAura, isBossAura, casterIsPlayer, nameplateShowAll, timeMod)
-		local v = auraList[spellID]
+	target = function(self, unit, data)
+		local v = auraList[data.spellId]
 		if v then
-			local show = checkFilter(v, self, unit, caster)
+			local show = checkFilter(v, self, unit, data.sourceUnit)
 			return show
-		elseif isBossAura or caster == "vehicle" then
+		elseif data.isBossAura or data.sourceUnit == "vehicle" then
 			return true
-		elseif iconFrame.isDebuff and not caster then -- and not IsInInstance() then
+		elseif data.isHarmful and not data.sourceUnit then -- and not IsInInstance() then
 			-- EXPERIMENTAL: ignore debuffs from players outside the group, eg. world bosses
 			return
 		elseif UnitCanAttack("player", unit) and not UnitPlayerControlled(unit) then
@@ -852,36 +869,36 @@ local filterFuncs = {
 			-- Show auras of unknown origin
 			-- Show auras cast by the unit
 			-- Show buffs with a duration < 1 hour
-			return (not caster or caster == unit) or (not iconFrame.isDebuff and duration < 3600)
+			return (not data.sourceUnit or data.sourceUnit == unit) or (not data.isHarmful and data.duration < 3600)
 		else
 			-- Friendly target or hostile player
 			-- Show auras of unknown origin
-			return not caster
+			return not data.sourceUnit
 		end
 	end,
-	party = function(self, unit, iconFrame, name, icon, count, debuffType, duration, expirationTime, unitCaster, canStealOrPurge, _, spellID, canApplyAura, isBossAura, casterIsPlayer, nameplateShowAll)
-		local v = auraList[spellID]
+	party = function(self, unit, data)
+		local v = auraList[data.spellId]
 		if v then
-			return (iconFrame.isPlayer and bit_band(v, FILTER_BY_PLAYER) > 0) or bit_band(v, FILTER_ON_FRIEND) > 0
+			return (data.isFromPlayerOrPlayerPet and bit_band(v, FILTER_BY_PLAYER) > 0) or bit_band(v, FILTER_ON_FRIEND) > 0
 		else
-			return isBossAura
+			return data.isBossAura
 		end
 	end,
 }
 
-filterFuncs.focus = function(self, unit, iconFrame, name, icon, count, debuffType, duration, expirationTime, caster, canStealOrPurge, _, spellID, canApplyAura, isBossAura, casterIsPlayer, nameplateShowAll)
+filterFuncs.focus = function(self, unit, data)
 	if auraList_focus[id] then
-		return filterFuncs.target(self, unit, iconFrame, name, icon, count, debuffType, duration, expirationTime, caster, canStealOrPurge, _, spellID, canApplyAura, isBossAura, casterIsPlayer, nameplateShowAll)
+		return filterFuncs.target(self, unit, data)
 	else
-		return isBossAura
+		return data.isBossAura
 	end
 end
 
-filterFuncs.targettarget = function(self, unit, iconFrame, name, icon, count, debuffType, duration, expirationTime, caster, canStealOrPurge, _, spellID, canApplyAura, isBossAura, casterIsPlayer, nameplateShowAll)
+filterFuncs.targettarget = function(self, unit, data)
 	if auraList_targettarget[id] then
-		return filterFuncs.target(self, unit, iconFrame, name, icon, count, debuffType, duration, expirationTime, caster, canStealOrPurge, _, spellID, canApplyAura, isBossAura, casterIsPlayer, nameplateShowAll)
+		return filterFuncs.target(self, unit, data)
 	else
-		return isBossAura
+		return data.isBossAura
 	end
 end
 

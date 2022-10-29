@@ -17,7 +17,7 @@ local Runes
 local ColorGradient = oUF.ColorGradient
 local SMOOTH_COLORS = oUF.colors.smooth
 local unpack = unpack
-
+--[[
 local function Rune_OnUpdate(bar, elapsed)
 	if bar.mouseover and not bar.ready then
 		local duration, max = bar.duration, bar.max
@@ -43,7 +43,7 @@ local function Rune_OnLeave(bar)
 	bar.mouseover = nil
 	bar.value:Hide()
 end
-
+--]]
 local function Runes_PostUpdate(element, runemap)
 	for index, runeID in next, runemap do
 		local bar = element[index]
@@ -83,12 +83,12 @@ ns.CreateRunes = function(frame)
 		bar.value:Hide()
 	end
 
-	tinsert(frame.mouseovers, function(self, isMouseOver)
+--[[	tinsert(frame.mouseovers, function(self, isMouseOver)
 		local func = isMouseOver and Rune_OnEnter or Rune_OnLeave
 		for i = 1, #Runes do
 			func(Runes[i])
 		end
 	end)
-
+--]]
 	return Runes
 end

@@ -55,7 +55,7 @@ LibStub("PhanxConfig-OptionsPanel").CreateOptionsPanel(L.Auras, "oUF Phanx", fun
 	---------------------------------------------------------------------
 	-- Sub-panel for adding an aura:
 
-	addPanel = CreateFrame("Frame", nil, panel)
+	addPanel = CreateFrame("Frame", nil, panel, BackdropTemplateMixin and "BackdropTemplate")
 	addPanel:SetPoint("TOPLEFT", notes, "BOTTOM", 8, -12)
 	addPanel:SetPoint("BOTTOMRIGHT", -16, 16)
 	addPanel:SetBackdrop(panelBackdrop)
@@ -163,7 +163,7 @@ LibStub("PhanxConfig-OptionsPanel").CreateOptionsPanel(L.Auras, "oUF Phanx", fun
 	---------------------------------------------------------------------
 	-- Sub-panel for configuring an aura:
 
-	auraPanel = CreateFrame("Frame", nil, panel)
+	auraPanel = CreateFrame("Frame", nil, panel, BackdropTemplateMixin and "BackdropTemplate")
 	auraPanel:SetPoint("TOPLEFT", notes, "BOTTOM", 8, -16)
 	auraPanel:SetPoint("BOTTOMRIGHT", -16, 16)
 	auraPanel:SetBackdrop(panelBackdrop)
@@ -259,7 +259,7 @@ LibStub("PhanxConfig-OptionsPanel").CreateOptionsPanel(L.Auras, "oUF Phanx", fun
 	---------------------------------------------------------------------
 	-- List of existing aura filters:
 
-	listPanel = CreateFrame("Frame", nil, panel)
+	listPanel = CreateFrame("Frame", nil, panel, BackdropTemplateMixin and "BackdropTemplate")
 	listPanel:SetPoint("TOPRIGHT", notes, "BOTTOM", 0, -16)
 	listPanel:SetPoint("BOTTOMLEFT", 16, 16)
 	listPanel:SetBackdrop(panelBackdrop)
@@ -350,7 +350,9 @@ LibStub("PhanxConfig-OptionsPanel").CreateOptionsPanel(L.Auras, "oUF Phanx", fun
 		local function OnEnter(self)
 			GameTooltip:SetOwner(self, "ANCHOR_NONE")
 			GameTooltip:SetPoint("TOPRIGHT", self, "TOPLEFT")
-			GameTooltip:SetSpellByID(self.id)
+			if (self.id) then
+				GameTooltip:SetSpellByID(self.id)
+			end
 			GameTooltip:AddLine(format(L.SpellID, self.id), 0.5, 0.8, 1)
 			GameTooltip:Show()
 			if not self.selected then

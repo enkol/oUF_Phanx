@@ -1,5 +1,5 @@
 ## Interface: 80000
-## Version: @project-version@
+## Version: 8.0.1.0
 
 ## Title: oUF: Phanx
 ## Notes: oUF unit frames with many PvE-oriented features and a few options.
@@ -47,19 +47,4 @@ Auras.lua
 Functions.lua
 Frames.lua
 
-#@do-not-package@
-Config\Libs\PhanxConfig-ColorPicker\PhanxConfig-ColorPicker.lua
-Config\Libs\PhanxConfig-Checkbox\PhanxConfig-Checkbox.lua
-Config\Libs\PhanxConfig-Dropdown\PhanxConfig-Dropdown.lua
-Config\Libs\PhanxConfig-EditBox\PhanxConfig-EditBox.lua
-Config\Libs\PhanxConfig-Header\PhanxConfig-Header.lua
-Config\Libs\PhanxConfig-MediaDropdown\PhanxConfig-MediaDropdown.lua
-Config\Libs\PhanxConfig-OptionsPanel\PhanxConfig-OptionsPanel.lua
-Config\Libs\PhanxConfig-Slider\PhanxConfig-Slider.lua
 
-Config\Localization.lua
-
-Config\Main.lua
-Config\Auras.lua
-Config\Units.lua
-#@end-do-not-package@

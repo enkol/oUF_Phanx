@@ -99,7 +99,7 @@ function ns.AddCastbar(self)
 	Castbar:SetPoint("TOPRIGHT", self, "BOTTOMRIGHT", 0, -10)
 	Castbar:SetHeight(height)
 
-	local Icon = Castbar:CreateTexture(nil, "BACKDROP")
+	local Icon = Castbar:CreateTexture(nil, "OVERLAY") -- dragonflight BACKDROP 
 	Icon:SetPoint("TOPRIGHT", Castbar, "TOPLEFT", 0, 0)
 	Icon:SetPoint("BOTTOMRIGHT", Castbar, "BOTTOMLEFT", 0, 0)
 	Icon:SetWidth(height)

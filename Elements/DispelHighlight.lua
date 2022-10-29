@@ -59,10 +59,11 @@ function Update(self, event, unit)
 	if UnitCanAssist("player", unit) then
 		if next(canDispel) then
 			for i = 1, 40 do
-				local name, _, _, _, type = UnitDebuff(unit, i)
+--				local name, _, _, _, type = UnitDebuff(unit, i)
+				local name, _, _, type = UnitDebuff(unit, i)
 				if not name then break end
 				-- print("UnitDebuff", unit, i, tostring(name), tostring(type))
-				if type and (not debuffType or ClassDispelPriority[type] > ClassDispelPriority[debuffType]) then
+				if type and (not debuffType or (ClassDispelPriority[type] and ClassDispelPriority[type] > ClassDispelPriority[debuffType])) then
 					-- print("debuffType", type)
 					debuffType = type
 					dispellable = canDispel[type]

@@ -145,7 +145,7 @@ LibStub("PhanxConfig-OptionsPanel"):New(L.UnitSettings, "oUF Phanx", function(pa
 
 	---------------------------------------------------------------------
 
-	local unitSettings = CreateFrame("Frame", nil, panel)
+	local unitSettings = CreateFrame("Frame", nil, panel, BackdropTemplateMixin and "BackdropTemplate")
 	unitSettings:SetPoint("TOPLEFT", unitList, "TOPRIGHT", 12, 0)
 	unitSettings:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 0, -12)
 	unitSettings:SetPoint("BOTTOMRIGHT", -15, 15)
@@ -244,7 +244,7 @@ LibStub("PhanxConfig-OptionsPanel"):New(L.UnitSettings, "oUF Phanx", function(pa
 
 	---------------------------------------------------------------------
 
-	local globalSettings = CreateFrame("Frame", nil, panel)
+	local globalSettings = CreateFrame("Frame", nil, panel, BackdropTemplateMixin and "BackdropTemplate")
 	globalSettings:SetPoint("TOPLEFT", unitList, "TOPRIGHT", 12, 0)
 	globalSettings:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 0, -12)
 	globalSettings:SetPoint("BOTTOMRIGHT", -15, 15)

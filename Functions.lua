@@ -442,7 +442,7 @@ local function AuraIconOverlay_SetBorderColor(overlay, r, g, b)
 	overlay:GetParent():SetBorderColor(r, g, b)
 end
 
-function ns.Auras_PostCreateIcon(element, button)
+function ns.Auras_PostCreateButton(element, button)
 	ns.CreateBorder(button, 12)
 
 	button.cd:SetReverse(true)
@@ -497,7 +497,7 @@ local function FindAuraTimer(button, unit)
 	return not OmniCC
 end
 
-function ns.Auras_PostUpdateIcon(element, unit, button, index, offset)
+function ns.Auras_PostUpdateButton(element, button, unit, data, position) --element, unit, button, index, offset)
 	button.icon:SetDesaturated(not playerUnits[button.caster or ""])
 
 	if not button.timer then

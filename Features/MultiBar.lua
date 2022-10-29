@@ -34,6 +34,7 @@ function ns.CreateMultiBar(frame, numBars, textSize, leftToRight)
 	local multibar = CreateFrame("Frame", nil, frame)
 	multibar.__owner = frame
 
+	Mixin(multibar, BackdropTemplateMixin)
 	multibar:SetBackdrop(ns.config.backdrop)
 	multibar:SetBackdropColor(0, 0, 0, 1)
 	multibar:SetBackdropBorderColor(unpack(ns.config.borderColor))

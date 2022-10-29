@@ -163,6 +163,7 @@ function ns.CreateBorder(self, size, offset, parent, layer)
 				backdrop.insets.bottom = 0
 				backdrop.insets.left = 0
 			end
+			Mixin(self, BackdropTemplateMixin)
 			self:SetBackdrop(backdrop)
 		end
 	end

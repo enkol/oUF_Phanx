@@ -54,7 +54,7 @@ ns.configDefault = {
 	powerBG = 0.25,
 
 	borderColor = { 0.5, 0.5, 0.5 },
-	borderSize = 16,
+	borderSize = 12,
 
 	PVP = false,            -- enable PVP mode, currently only affects aura filtering
 }
@@ -65,7 +65,7 @@ ns.configDefault = {
 
 ns.uconfigDefault = {
 	player = {
-		point = "BOTTOMRIGHT UIParent CENTER -200 -200",
+		point = "BOTTOMRIGHT UIParent CENTER -200 -140",
 		width = 1.3,
 		power = true,
 		castbar = true,
@@ -77,7 +77,7 @@ ns.uconfigDefault = {
 		castbar = true,
 	},
 	target = {
-		point = "BOTTOMLEFT UIParent CENTER 200 -200",
+		point = "BOTTOMLEFT UIParent CENTER 200 -140",
 		width = 1.3,
 		power = true,
 		castbar = true,
@@ -95,23 +95,23 @@ ns.uconfigDefault = {
 		width = 0.5,
 	},
 	party = {
-		point = "TOPLEFT boss5 BOTTOMLEFT 0 -75", -- CHECK POSITION
+		point = "LEFT UIParent LEFT 24 75", -- CHECK POSITION
 		width = 0.5,
 		power = true,
-		attributes = { "showPlayer", true, "showParty", true, "showRaid", false, "xOffset", 0, "yOffset", -25 },
+		attributes = { "showPlayer", false, "showParty", true, "showRaid", false, "xOffset", 0, "yOffset", 20, "point", "BOTTOM" },
 		visible = "custom [nogroup][group:party,@party1,noexists][group:raid,@raid6,exists]hide;show",
 	},
 	partypet = {
-		point = "TOPLEFT party TOPRIGHT 12 0",
+		point = "TOPRIGHT party TOPLEFT 12 0",
 		width = 0.25,
-		attributes = { "showPlayer", true, "showParty", true, "showRaid", false, "xOffset", 0, "yOffset", -25, "useOwnerUnit", true, "unitsuffix", "pet" },
+		attributes = { "showPlayer", false, "showParty", true, "showRaid", false, "xOffset", 0, "yOffset", 20, "point", "BOTTOM", "useOwnerUnit",false, "unitsuffix", "pet" },
 		visible = "custom [nogroup][group:party,@party1,noexists][group:raid,@raid6,exists]hide;show",
 	},
 	-------------
 	--	Bosses --
 	-------------
 	boss1 = {
-		point = "TOPRIGHT UIParent TOPRIGHT -15 -250",
+		point = "TOPLEFT UIParent TOPLEFT 25 -25",
 		width = 0.8,
 		height = 0.8,
 		power = true,
@@ -129,17 +129,24 @@ ns.uconfigDefault = {
 		power = true,
 	},
 	boss4 = {
-		point = "TOPRIGHT boss3 BOTTOMRIGHT 0 -25",
+		point = "TOPRIGHT boss3 BOTTOMRIGHT 0 -25", --"LEFT boss1 RIGHT 25 0",
 		width = 0.8,
 		height = 0.8,
 		power = true,
 	},
-	boss5 = {
+--[[	boss5 = {
 		point = "TOPRIGHT boss4 BOTTOMRIGHT 0 -25",
 		width = 0.8,
 		height = 0.8,
 		power = true,
 	},
+	boss6 = {
+		point = "TOPRIGHT boss5 BOTTOMRIGHT 0 -25",
+		width = 0.8,
+		height = 0.8,
+		power = true,
+	},
+--]]	
 	-----------------------
 	--	Arena Oppnonents --
 	-----------------------
@@ -357,7 +364,7 @@ function Loader:ADDON_LOADED(event, addon)
 	end
 
 	-- Load options on demand
---[===[@non-debug@
+--@non-debug@
 	Options:SetScript("OnShow", function(self)
 		oUFPhanx = ns
 		local loaded, reason = LoadAddOn("oUF_Phanx_Config")
@@ -369,7 +376,7 @@ function Loader:ADDON_LOADED(event, addon)
 			oUFPhanx = nil
 		end
 	end)
---@end-non-debug@]===]
+--@end-non-debug@
 
 	SLASH_OUFPHANX1 = "/pouf"
 	SLASH_OUFPHANX2 = "/oufphanx"
