@@ -399,6 +399,14 @@ function Loader:ADDON_LOADED(event, addon)
 			else
 				DEFAULT_CHAT_FRAME:AddMessage(format("|cff00ddbaoUF Phanx:|r Your current target does not have any %s.", cmd))
 			end
+		elseif cmd == "pa" then
+			if ns._printAuras == true then
+				ns._printAuras = false
+				print("Print aura spells info: off")
+			else
+				ns._printAuras = true
+				print("Print aura spells info: on")
+			end
 		else
 			InterfaceOptionsFrame_OpenToCategory("oUF Phanx")
 			InterfaceOptionsFrame_OpenToCategory("oUF Phanx")
@@ -484,9 +492,9 @@ function Loader:MODIFIER_STATE_CHANGED(event, key, state)
 	end
 	local a, b, c
 	if state == 1 then
-		a, b, c = "CustomFilter", "__CustomFilter", ns.CustomAuraFilters.default
+		a, b, c = "FilterAura", "__FilterAura", ns.CustomAuraFilters.default
 	else
-		a, b = "__CustomFilter", "CustomFilter"
+		a, b = "__FilterAura", "FilterAura"
 	end
 	for i = 1, #oUF.objects do
 		local object = oUF.objects[i]

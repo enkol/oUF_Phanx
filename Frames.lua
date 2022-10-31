@@ -438,18 +438,49 @@ local function Spawn(self, unit, isSingle)
 		local ROWS = 2
 		local SIZE_MOD = .9
 
+		local ICONS_PER_ROW   = floor((FRAME_WIDTH + GAP) / (FRAME_HEIGHT + GAP))
+		local DEBUFFS_PER_ROW = 2
+		local BUFFS_PER_ROW   = ICONS_PER_ROW - DEBUFFS_PER_ROW
+		local MAX_BUFFS       = ROWS * BUFFS_PER_ROW
+		local MAX_DEBUFFS     = ROWS * DEBUFFS_PER_ROW
+
+		local debuffs = CreateFrame("Frame", nil, self)
+		debuffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 2, 12)
+		debuffs:SetHeight((FRAME_HEIGHT * SIZE_MOD * ROWS) + (GAP * 2 * (ROWS - 1)))
+		debuffs:SetWidth((FRAME_HEIGHT * DEBUFFS_PER_ROW) + (GAP * (DEBUFFS_PER_ROW - 1)))
+
+		debuffs["growth-x"] = "RIGHT"
+		debuffs["growth-y"] = "UP"
+		debuffs["initialAnchor"] = "BOTTOMLEFT"
+		debuffs["showType"] = true
+		debuffs["size"] = FRAME_HEIGHT * 1 --SIZE_MOD
+		debuffs["spacing-x"] = GAP
+		debuffs["spacing-y"] = GAP * 2
+		debuffs["num"] = MAX_DEBUFFS
+
+		debuffs.FilterAura   = ns.CustomAuraFilters.player
+		debuffs.PostCreateButton = ns.Auras_PostCreateButton
+		debuffs.PostUpdateButton  = ns.Auras_PostUpdateButton
+		debuffs.PostUpdate     = ns.Auras_PostUpdate -- required to detect Dead => Ghost
+
+		self.Debuffs = debuffs
+
 		local buffs = CreateFrame("Frame", nil, self)
-		buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 0, 24)
-		buffs:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", 0, 24)
-		buffs:SetHeight((FRAME_HEIGHT * SIZE_MOD * ROWS) + (GAP * (ROWS - 1)))
+		--buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 0, 24)
+		--buffs:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", 0, 24)
+		--buffs:SetHeight((FRAME_HEIGHT * SIZE_MOD * ROWS) + (GAP * (ROWS - 1)))
+		buffs:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", 2, 12)
+		buffs:SetHeight((FRAME_HEIGHT * ROWS) + (GAP * 2 * (ROWS - 1)))
+		buffs:SetWidth((FRAME_HEIGHT * BUFFS_PER_ROW) + (GAP * (BUFFS_PER_ROW - 1)))
 
 		buffs["growth-x"] = "LEFT"
 		buffs["growth-y"] = "UP"
 		buffs["initialAnchor"] = "BOTTOMRIGHT"
-		buffs["num"] = floor((FRAME_WIDTH + GAP) / (FRAME_HEIGHT + GAP)) * ROWS
+		buffs["showType"] = false
 		buffs["size"] = FRAME_HEIGHT * SIZE_MOD
 		buffs["spacing-x"] = GAP
-		buffs["spacing-y"] = GAP
+		buffs["spacing-y"] = GAP * 2
+		buffs["num"] = MAX_BUFFS
 
 		buffs.FilterAura   = ns.CustomAuraFilters.player
 		buffs.PostCreateButton = ns.Auras_PostCreateButton

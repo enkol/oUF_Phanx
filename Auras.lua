@@ -315,6 +315,18 @@ if playerClass == "HUNTER" then
 	a[193526] = FILTER_BY_PLAYER -- Trueshot
 	a[187131] = FILTER_BY_PLAYER -- Vulnerable
 	a[195645] = FILTER_BY_PLAYER -- Wing Clip
+	
+	-- Dragonflight
+	a[288613] = FILTER_ON_PLAYER -- Trueshot
+	a[271788] = FILTER_BY_PLAYER -- Serpent Sting
+	a[388909] = FILTER_ON_PLAYER -- Salvo (debuff)
+
+	a[342076] = FILTER_ON_PLAYER -- Optimierung
+	a[260402] = FILTER_ON_PLAYER -- Doppelpack
+	a[260242] = FILTER_ON_PLAYER -- Präzise Schüsse
+	a[375893] = FILTER_BY_PLAYER -- Todeschakram
+	a[328275] = FILTER_BY_PLAYER -- Wildes Mal (Nightfae)
+	
 	-- Talents
 	-- Artifact Traits
 end
@@ -816,9 +828,27 @@ local IsInInstance, UnitCanAttack, UnitIsFriend, UnitIsUnit, UnitPlayerControlle
 
 local unitIsPlayer = { player = true, pet = true, vehicle = true }
 
-local function checkFilter(v, self, unit, caster)
+local function printAuraSpell(filter, v, self, unit, data)
+	if ns._printAuras == true then
+		local mode = "?"
+		if v then
+			if bit_band(v, FILTER_BY_PLAYER) > 0 then
+				mode = "FILTER_BY_PLAYER"
+			elseif bit_band(v, FILTER_ON_FRIEND) > 0 then
+				mode = "FILTER_ON_FRIEND"
+			elseif bit_band(v, FILTER_ON_PLAYER) > 0 then
+				mode = "FILTER_ON_PLAYER"
+			elseif bit_band(v, FILTER_DISABLE) == 0 then
+				mode = "FILTER_DISABLE"
+			end
+		end
+		print(tostring(filter) .. " " .. mode .. "  " .. tostring(data.sourceUnit)  .. " >> " .. tostring(unit) .. " " .. tostring(data.spellId) .. " " .. (data.spellId and GetSpellLink(data.spellId) or "noid") .. (data.isHarmful and " debuff" or " buff"))
+	end
+end
+
+local function checkFilter(v, self, unit, data)
 	if bit_band(v, FILTER_BY_PLAYER) > 0 then
-		return unitIsPlayer[caster]
+		return unitIsPlayer[data.sourceUnit]
 	elseif bit_band(v, FILTER_ON_FRIEND) > 0 then
 		return UnitIsFriend(unit, "player") and UnitPlayerControlled(unit)
 	elseif bit_band(v, FILTER_ON_PLAYER) > 0 then
@@ -832,16 +862,17 @@ local function debug(...)
 	ChatFrame3:AddMessage(strjoin(" ", tostringall(...)))
 end
 
---iconFrame, name, icon, count, debuffType, data.duration, expirationTime, data.sourceUnit, canStealOrPurge, _, data.spellId, canApplyAura, data.isBossAura, casterIsPlayer, nameplateShowAll
 local filterFuncs = {
 	default = function(self, unit, data)
 		local v = auraList[data.spellId]
+		printAuraSpell("default", v, self, unit, data)
 		return not v or bit_band(v, FILTER_DISABLE) == 0
 	end,
 	player = function(self, unit, data)
 		local v = auraList[data.spellId]
+		printAuraSpell("player", v, self, unit, data)
 		if v then
-			return checkFilter(v, self, unit, data.sourceUnit)
+			return checkFilter(v, self, unit, data)
 		else
 			return data.isBossAura or data.sourceUnit == "vehicle"
 		end
@@ -856,13 +887,15 @@ local filterFuncs = {
 	end,
 	target = function(self, unit, data)
 		local v = auraList[data.spellId]
+		printAuraSpell("target", v, self, unit, data)
 		if v then
-			local show = checkFilter(v, self, unit, data.sourceUnit)
-			return show
+			return checkFilter(v, self, unit, data)
 		elseif data.isBossAura or data.sourceUnit == "vehicle" then
 			return true
 		elseif data.isHarmful and not data.sourceUnit then -- and not IsInInstance() then
 			-- EXPERIMENTAL: ignore debuffs from players outside the group, eg. world bosses
+			return
+		elseif data.isHarmful and not data.isFromPlayerOrPlayerPet then
 			return
 		elseif UnitCanAttack("player", unit) and not UnitPlayerControlled(unit) then
 			-- Hostile NPC
