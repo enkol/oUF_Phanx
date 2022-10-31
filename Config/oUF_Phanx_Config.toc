@@ -1,5 +1,5 @@
 ## Interface: 70300
-## Version: 8.0.1.0
+## Version: @project-version@
 
 ## Title: oUF: Phanx Options
 ## Notes: Configuration UI for oUF Phanx.
