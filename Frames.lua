@@ -753,6 +753,7 @@ function ns.Factory(oUF)
 	local BAR_TEXTURE = LibStub("LibSharedMedia-3.0"):Fetch("statusbar", config.statusbar) or "Interface\\TargetingFrame\\UI-StatusBar"
 
 	-- Fix default mirror timers to mach
+	--[[ Removing this for now, as it does not work correctly in Drsgonflight
 	for i = 1, 3 do
 		local barname = "MirrorTimer" .. i
 		local bar = _G[barname]
@@ -780,10 +781,11 @@ function ns.Factory(oUF)
 
 		bar.text:ClearAllPoints()
 		bar.text:SetPoint("LEFT", bar, 4, 0)
-		--bar.text:SetFont(FONT_FILE, 16, config.fontOutline) -- dragonflight
+		--bar.text:SetFont(FONT_FILE, 16, config.fontOutline)
 
 		bar.border:Hide()
 
 		ns.CreateBorder(bar, nil, nil, bar.bar, "OVERLAY")
 	end
+	--]]
 end
