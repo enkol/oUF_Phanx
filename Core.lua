@@ -245,7 +245,13 @@ end)
 local Options = CreateFrame("Frame", "oUFPhanxOptions")
 Options:Hide()
 Options.name = "oUF Phanx"
-InterfaceOptions_AddCategory(Options)
+
+if InterfaceOptions_AddCategory then
+	InterfaceOptions_AddCategory(Options)
+else
+	local category, layout = _G.Settings.RegisterCanvasLayoutCategory(Options, Options.name)
+	_G.Settings.RegisterAddOnCategory(category)
+end
 
 function Loader:ADDON_LOADED(event, addon)
 	if addon ~= "oUF_Phanx" then return end
