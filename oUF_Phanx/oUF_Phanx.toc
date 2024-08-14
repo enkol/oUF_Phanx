@@ -1,0 +1,50 @@
+## Interface: 110000
+## Version: 11.0.0.0
+
+## Title: oUF: Phanx
+## Notes: oUF unit frames with many PvE-oriented features and a few options.
+## Notes-deDE: oUF-Einheitenfenster mit vielen PvE-orientieren Funktionen und wenigen Optionen.
+## Notes-esES: Marcos de unidades de oUF con muchas funciones orientados a JcE y unas pocas opciones.
+## Notes-esMX: Marcos de unidades de oUF con muchas funciones orientados a JcE y unas pocas opciones.
+## Notes-frFR: Portraits d'unités avec nombreuses fonctionnalités visant à JcE et quelques options.
+## Notes-ptBR: Quadros de unidade de oUF com muitas funções orientadas o JxA e umas poucas opções.
+
+## Author: Phanx
+## X-Email: addons@phanx.net
+## X-License: All rights reserved
+## X-Website: https://github.com/Phanx/oUF_Phanx
+## X-Curse-Project-ID: 19939
+## X-WoWI-ID: 13993
+
+## Dependencies: oUF
+## OptionalDependencies: LibResInfo-1.0, LibSharedMedia-3.0, PhanxConfigWidgets
+## SavedVariables: oUFPhanxConfig, oUFPhanxUnitConfig
+## SavedVariablesPerCharacter: oUFPhanxAuraConfig, oUFPhanxConfigPC
+
+Libs\LibStub\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
+Libs\LibResInfo-1.0\LibResInfo-1.0.lua
+Libs\LibSharedMedia-3.0\LibSharedMedia-3.0.lua
+
+Plugins\Smooth.lua
+
+Elements\AFK.lua
+Elements\CombatText.lua
+Elements\DispelHighlight.lua
+Elements\ResInfo.lua
+
+Features\MultiBar.lua
+Features\Orbs.lua
+Features\Border.lua
+Features\Castbar.lua
+Features\Runes.lua
+Features\Tags.lua
+Features\Totems.lua
+
+Core.lua
+
+Auras.lua
+Functions.lua
+Frames.lua
+
+
